@@ -16,7 +16,7 @@ import sys
 
 # The configuration
 cell_size = 30
-cell_size_inner = 25
+cell_size_inner = 30
 cols = 10
 rows = 22
 max_fps = 30
@@ -26,13 +26,13 @@ pygame.mixer.init()
 
 colors = [
     (0, 0, 0),
-    (255, 30, 85),    # Soft pink
+    (237, 80, 104),   # Pink
+    (255, 176, 0),    # Orange
+    (31, 163, 158),   # Bluegreen
+    (35, 51, 135),    # Blue
+    (250, 128, 114),  # Salmon
     (230, 220, 210),  # Cream white
-    (60, 108, 245),   # Light blue
-    (110, 140, 50),   # Olive green
-    (30, 100, 52),    # Leaf green
-    (180, 202, 73),   # Lime green
-    (160, 25, 218),   # Purple
+    (255, 119, 0),    # Yellow
     (20, 20, 20)  # Helper color for background grid
 ]
 
