@@ -4,13 +4,14 @@ from collections import deque
 import numpy as np
 import random
 
+
 class DQNAgent:
 
-    def __init__(self, enviroment):
-        # Initialize atributes
+    def __init__(self, environment):
+        # Initialize attributes
         self.start_size = 1000
-        self.state_size = 4 # Vi tror att det ar de olika rotationerna som shapesen kan utfora
-        self._action_size = enviroment.action_space.n
+        self.state_size = 4  # Vi tror att det ar de olika rotationerna som shapesen kan utfora
+        self._action_size = environment.action_space.n
         self.memory_size = 2000
         self.experience_replay = deque(maxlen=self.memory_size)
         self.discount = 0.95
@@ -30,7 +31,7 @@ class DQNAgent:
 
     def build_model(self):
         model = Sequential()
-       #Embedding(layer_size, number of dimensions, length of input seq) behover vi?
+        # Embedding(layer_size, number of dimensions, length of input seq) behover vi?
         model.add(Dense(self.neurons[0], input_dim=self.state_size, activation='relu'))
         model.add(Dense(self.neurons[0], input_dim=self.state_size, activation='relu'))
         model.add(Dense(self.neurons[0], activation='linear'))
@@ -53,7 +54,7 @@ class DQNAgent:
         """Training the agent"""
         minibatch = random.sample(self.experience_replay, batch_size)
 
-        for state, action,reward, next_state, terminated in minibatch:
+        for state, action, reward, next_state, terminated in minibatch:
             target = self.q_network.predic(state)
 
             if terminated:
@@ -63,12 +64,3 @@ class DQNAgent:
                 target[0][action] = reward + self.gamma * np.amax(t)
 
             self.q_network.fit(state, target, epochs=1, verbose=0)
-
-
-
-
-
-
-
-
-
