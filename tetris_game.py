@@ -33,7 +33,7 @@ colors = [
     (30, 100, 52),    # Leaf green
     (180, 202, 73),   # Lime green
     (160, 25, 218),   # Purple
-    (10, 10, 10)  # Helper color for background grid
+    (20, 20, 20)  # Helper color for background grid
 ]
 
 # Define the shapes of the single parts
