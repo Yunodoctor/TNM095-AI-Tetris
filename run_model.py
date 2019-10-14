@@ -27,3 +27,36 @@ def run_dqn():
         bar = progressbar.ProgressBar(maxval=time_steps_per_episode / 10,
                                       widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         bar.start()
+
+        for timestep in range(time_steps_per_episode):
+            # Run Action
+            action = agent.act(state)
+
+            # Take action
+            next_state, reward, terminated, info = environment.step(action)
+
+            reward = environment.get_game_score()
+            next_state = environment.next_stone()
+
+
+            next_state = np.reshape(next_state, [1, 1])
+            agent.store(state, action, reward, next_state, terminated)
+
+            state = next_state
+
+            if terminated:
+                agent.alighn_target_model()
+                break
+
+            if len(agent.experience_replay) > batch_size:
+                agent.retrain(batch_size)
+
+            if timestep % 10 == 0:
+                bar.update(timestep / 10 + 1)
+
+        bar.finish()
+        if (e + 1) % 10 == 0:
+            print("**********************************")
+            print("Episode: {}".format(e + 1))
+            environment.run()
+            print("**********************************")

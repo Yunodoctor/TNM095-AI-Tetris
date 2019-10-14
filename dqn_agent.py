@@ -29,6 +29,9 @@ class DQNAgent:
         self.q_network = self.build_model()
         self.target_network = self.build_model()
 
+    def store(self, state, action, reward, next_state, terminated):
+        self.experience_replay.append((state, action, reward, next_state, terminated))
+
     def build_model(self):
         model = Sequential()
         # Embedding(layer_size, number of dimensions, length of input seq) behover vi?
@@ -39,6 +42,9 @@ class DQNAgent:
         model.compile(loss=self.loss, optimizer=self.optimizer)
 
         return model
+
+    def alighn_target_model(self):
+        self.target_network.set_weights(self.q_network.get_weights())
 
     # Exploration function
     def act(self, state):

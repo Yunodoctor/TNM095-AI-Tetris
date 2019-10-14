@@ -250,6 +250,9 @@ class TetrisApp(object):
             self.init_game()
             self.gameover = False
 
+    def get_game_score(self):
+        return self.score
+
     def run(self):
         key_actions = {
             'ESCAPE': self.quit,
@@ -268,6 +271,7 @@ class TetrisApp(object):
         while 1:
             self.screen.fill((0, 0, 0))
             if self.gameover:
+                self.score -= 2
                 self.center_msg("""Game Over!\nYour score: %dPress Any Key to continue""" % self.score)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
