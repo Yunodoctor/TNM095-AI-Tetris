@@ -206,7 +206,7 @@ class TetrisApp(object):
 
     def drop(self, boolean):
         if not self.gameover and not self.paused:
-            self.score += 1 if boolean else 0
+           #self.score += 1 if boolean else 0
             self.stone_y += 1
             if check_collision(self.board,
                                self.stone,
@@ -229,10 +229,11 @@ class TetrisApp(object):
                 return True
         return False
 
-    def instant_drop(self):
+    '''def instant_drop(self):
         if not self.gameover and not self.paused:
             while not self.drop(True):
                 pass
+                '''
 
     def rotate_stone(self):
         if not self.gameover and not self.paused:
@@ -261,7 +262,7 @@ class TetrisApp(object):
             'DOWN': lambda: self.drop(True),
             'UP': self.rotate_stone,
             'p': self.toggle_pause,
-            'RETURN': self.instant_drop
+           # 'RETURN': self.instant_drop
         }
 
         self.gameover = False
