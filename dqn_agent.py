@@ -21,7 +21,7 @@ class DQNAgent:
         self.action_size = 4
 
         # Initialize discount exploration rate
-        self.epsilon = 0.2
+        self.epsilon = 0.5
         self.gamma = 0.6
 
         # Build networks
@@ -51,7 +51,7 @@ class DQNAgent:
         """Returns the best state of a given collection of states after exploring"""
         #state = np.reshape(state, [1, self.state_size])
         if np.random.rand() <= self.epsilon:
-            return random.sample(self.actions, 1)
+            return random.choice(self.actions)
         else:
             q_values = self.q_network.predict(state)
             return np.argmax(q_values[0][self.actions])
