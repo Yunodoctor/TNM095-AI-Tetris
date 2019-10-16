@@ -16,9 +16,9 @@ def run_dqn():
     agent.q_network.summery()
 
     for e in range(0, num_of_episodes):
-        # Reset the environment
-        state = environment.reset()
-        state = np.reshape(state, [1, 1])
+        """ ???? Reset the environment ???? """
+        state = environment.get_state()
+        state = np.reshape(state, [-1, 1])
 
         # Initialize variables
         reward = 0
@@ -36,10 +36,9 @@ def run_dqn():
             next_state, reward, terminated, info = environment.step(action)
 
             reward = environment.get_game_score()
-            next_state = environment.next_stone()
-
-
-            next_state = np.reshape(next_state, [1, 1])
+            next_state = environment.next_stone(action)
+            terminated = environment.get_terminated()
+            #next_state = np.reshape(next_state, [1, 1])
             agent.store(state, action, reward, next_state, terminated)
 
             state = next_state

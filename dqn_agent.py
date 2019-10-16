@@ -28,6 +28,7 @@ class DQNAgent:
         # Build networks
         self.q_network = self.build_model()
         self.target_network = self.build_model()
+        self.alighn_target_model()
 
     def store(self, state, action, reward, next_state, terminated):
         self.experience_replay.append((state, action, reward, next_state, terminated))
@@ -53,7 +54,7 @@ class DQNAgent:
         if random.random() <= self.epsilon:
             return random.random()
         else:
-            q_values = self.q_network.predic(state)
+            q_values = self.q_network.predict(state)
             return np.argmax(q_values[0])
 
     def retrain(self, batch_size):

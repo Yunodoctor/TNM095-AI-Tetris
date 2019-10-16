@@ -60,6 +60,8 @@ tetris_shapes = [
 ]
 
 
+
+
 # ================================================================================================#
 #                                       Function Definitions                                     #
 # ================================================================================================#
@@ -72,6 +74,7 @@ def rotate_clockwise(shape):
 
 def check_collision(board, shape, offset):
     off_x, off_y = offset
+    print(offset)
     for cy, row in enumerate(shape):
         for cx, cell in enumerate(row):
             try:
@@ -126,6 +129,16 @@ class TetrisApp(object):
 
         self.next_stone = tetris_shapes[rand(len(tetris_shapes))]
         self.init_game()
+
+        '''self.key_actions = {
+            0: self.quit, # Escape
+            1: lambda: self.move(-1), # Left
+            2: lambda: self.move(+1), # Right
+            3: lambda: self.drop(True), # Down
+            4: self.rotate_stone, # Rotate
+            # 5: self.toggle_pause,
+            # 'RETURN': self.instant_drop
+        }'''
 
     def new_stone(self):
         self.stone = self.next_stone[:]
@@ -199,6 +212,19 @@ class TetrisApp(object):
                                    (new_x, self.stone_y)):
                 self.stone_x = new_x
 
+    def get_state(self):
+        return self.stone_x, self.stone_y
+
+    def get_next_states(self):
+        states = {}
+        self.stone_id = self.stone
+
+        current_rotation = self.rotate_stone()
+
+        # For all rotations
+        
+        
+
     def quit(self):
         self.center_msg("Exiting...")
         pygame.display.update()
@@ -206,7 +232,7 @@ class TetrisApp(object):
 
     def drop(self, boolean):
         if not self.gameover and not self.paused:
-            self.score += 1 if boolean else 0
+            # self.score += 1 if boolean else 0
             self.stone_y += 1
             if check_collision(self.board,
                                self.stone,
@@ -229,10 +255,10 @@ class TetrisApp(object):
                 return True
         return False
 
-    def instant_drop(self):
+    """def instant_drop(self):
         if not self.gameover and not self.paused:
             while not self.drop(True):
-                pass
+                pass """
 
     def rotate_stone(self):
         if not self.gameover and not self.paused:
@@ -253,51 +279,41 @@ class TetrisApp(object):
     def get_game_score(self):
         return self.score
 
-    def run(self):
-        key_actions = {
-            'ESCAPE': self.quit,
-            'LEFT': lambda: self.move(-1),
-            'RIGHT': lambda: self.move(+1),
-            'DOWN': lambda: self.drop(True),
-            'UP': self.rotate_stone,
-            'p': self.toggle_pause,
-            'RETURN': self.instant_drop
-        }
+    def get_terminated(self):
+        if self.gameover:
+            return True
 
-        self.gameover = False
-        self.paused = False
+    def get_actions(self):
+        return self.key_actions
+
+
+    def run(self): # Skicka in x och rotation?
+
+        #self.gameover = False Flytta till step (?)
 
         dont_burn_my_cpu = pygame.time.Clock()
         while 1:
             self.screen.fill((0, 0, 0))
-            if self.gameover:
-                self.score -= 2
-                self.center_msg("""Game Over!\nYour score: %dPress Any Key to continue""" % self.score)
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.quit()
-                    elif event.type == pygame.KEYDOWN:
-                        self.start_game()
 
-            else:
-                if self.paused:
-                    self.center_msg("Paused")
-                else:
-                    pygame.draw.line(self.screen,
-                                     (255, 255, 255),
-                                     (self.r_lim + 1, 0),
-                                     (self.r_lim + 1, self.height - 1))
-                    self.display_msg("Next:", (
-                        self.r_lim + cell_size,
-                        2))
-                    self.display_msg("Score: %d\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
-                                     (self.r_lim + cell_size, cell_size * 5))
-                    self.draw_matrix(self.b_ground_grid, (0, 0))
-                    self.draw_matrix(self.board, (0, 0))
-                    self.draw_matrix(self.stone,
-                                     (self.stone_x, self.stone_y))
-                    self.draw_matrix(self.next_stone,
-                                     (cols + 1, 2))
+            """if self.gameover:
+                self.score -= 2 Denna ska vara i step tror vi när kommer run fatta att det är game over?"""
+
+            pygame.draw.line(self.screen,
+                             (255, 255, 255),
+                             (self.r_lim + 1, 0),
+                             (self.r_lim + 1, self.height - 1))
+            self.display_msg("Next:", (
+                self.r_lim + cell_size,
+                2))
+            self.display_msg("Score: %d\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
+                             (self.r_lim + cell_size, cell_size * 5))
+            self.draw_matrix(self.b_ground_grid, (0, 0))
+            self.draw_matrix(self.board, (0, 0))
+            self.draw_matrix(self.stone,
+                             (self.stone_x, self.stone_y))
+            self.draw_matrix(self.next_stone,
+                             (cols + 1, 2))
+
             pygame.display.update()
 
             for event in pygame.event.get():
