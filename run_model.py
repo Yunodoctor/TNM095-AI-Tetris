@@ -29,6 +29,7 @@ def run_dqn_train():
         for time_step in range(time_steps_per_episode):
             # Run Action
             action = agent.act(state)
+            print("\n Action: ", action)
 
             # Take action
             next_state, reward, terminated = environment.play(action)

@@ -54,7 +54,7 @@ class DQNAgent:
             return random.sample(self.actions, 1)
         else:
             q_values = self.q_network.predict(state)
-            return np.argmax(q_values[0])
+            return np.argmax(q_values[0][self.actions])
 
     def retrain(self, batch_size):
         """Training the agent"""
