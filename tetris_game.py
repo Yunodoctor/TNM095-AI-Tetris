@@ -141,7 +141,7 @@ class TetrisApp(object):
         self.stone_x = int(cols / 2 - len(self.stone[0]) / 2)
         self.stone_y = 0
 
-        if self.checked_collision(self.board,
+        if check_collision(self.board,
                            self.stone,
                            (self.stone_x, self.stone_y)):
             self.gameover = True
@@ -205,7 +205,7 @@ class TetrisApp(object):
                 new_x = 0
             if new_x > cols - len(self.stone[0]):
                 new_x = cols - len(self.stone[0])
-            if not self.checked_collision(self.board,
+            if not check_collision(self.board,
                                    self.stone,
                                    (new_x, self.stone_y)):
                 self.stone_x = new_x
@@ -228,7 +228,7 @@ class TetrisApp(object):
     def drop(self):
         if not self.gameover:
             self.stone_y += 1
-            if self.checked_collision(self.board,
+            if check_collision(self.board,
                                self.stone,
                                (self.stone_x, self.stone_y)):
                 self.board = join_matrixes(
@@ -260,7 +260,7 @@ class TetrisApp(object):
     def rotate_stone(self):
         if not self.gameover:
             new_stone = rotate_clockwise(self.stone)
-            if not self.checked_collision(self.board,
+            if not check_collision(self.board,
                                    new_stone,
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
@@ -318,4 +318,5 @@ class TetrisApp(object):
                          (cols + 1, 2))
 
         pygame.display.update()
+
         dont_burn_my_cpu.tick(max_fps)
