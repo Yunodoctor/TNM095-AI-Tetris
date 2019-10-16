@@ -16,7 +16,7 @@ import sys
 
 # The configuration
 cell_size = 30
-cell_size_inner = 30
+cell_size_inner = 25
 cols = 10
 rows = 22
 max_fps = 30
@@ -96,7 +96,7 @@ def join_matrixes(mat1, mat2, mat2_off):
     return mat1
 
 
-def board():
+def create_board():
     board = [[0 for x in range(cols)]
              for y in range(rows)]
     board += [[1 for x in range(cols)]]
@@ -129,8 +129,8 @@ class TetrisApp(object):
         self.init_game()
 
         self.actions = {
-            0: lambda: self.move(-1), # Left
-            1: lambda: self.move(+1), # Right
+            0: lambda: self.move(-1),  # Left
+            1: lambda: self.move(+1),  # Right
             2: self.rotate_stone,  # Rotate
         }
 
@@ -146,7 +146,7 @@ class TetrisApp(object):
             self.gameover = True
 
     def init_game(self):
-        self.board = board()
+        self.board = create_board()
         self.new_stone()
         self.level = 1
         self.score = 0
@@ -214,11 +214,8 @@ class TetrisApp(object):
         pygame.display.update()
         sys.exit()
 
-    def drop(self, boolean):
+    def drop(self):
         if not self.gameover:
-
-            # self.score += 1 if boolean else 0
-
             self.stone_y += 1
             if check_collision(self.board,
                                self.stone,
@@ -270,10 +267,11 @@ class TetrisApp(object):
         for x in self.actions:
             if x == action:
                 self.actions[action]()
-        self.render()
+        self.render_game()
+        self.drop()
         return self.get_state(), self.get_game_score(), self.get_terminated()
 
-    def render(self):  # Skicka in x och rotation?
+    def render_game(self):  # Skicka in x och rotation?
 
         # self.gameover = False Flytta till step (?)
 
