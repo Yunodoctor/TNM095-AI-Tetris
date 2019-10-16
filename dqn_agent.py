@@ -1,11 +1,9 @@
-#from tensorflow.keras import Sequential
-#from tensorflow.keras import Embedding, Dense
-
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Embedding, Dense
 from collections import deque
 import numpy as np
 import random
+
 
 class DQNAgent:
 
@@ -75,3 +73,13 @@ class DQNAgent:
                 target[0][action] = reward + self.gamma * np.amax(t)
 
             self.q_network.fit(state, target, epochs=1, verbose=0)
+
+    def save_model(self):
+        # save model and architecture to single file
+        self.q_network.save("q_network.h5")
+        print("Saved model to disk")
+
+    def load_model(self):
+        # load model
+        model = load_model('q_network.h5')
+        print("Loaded model from the disk")

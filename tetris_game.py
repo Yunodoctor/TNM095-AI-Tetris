@@ -245,10 +245,6 @@ class TetrisApp(object):
             self.score = -2  # -> Score for game over :)
         return False
 
-    """def instant_drop(self):
-        if not self.gameover and not self.paused:
-            while not self.drop(True):
-                pass """
 
     def rotate_stone(self):
         if not self.gameover:
@@ -282,11 +278,9 @@ class TetrisApp(object):
         return self.get_state(), self.get_game_score(), self.get_terminated()
 
     def render_game(self):  # Skicka in x och rotation?
-
-        # self.gameover = False Flytta till step (?)
-
         dont_burn_my_cpu = pygame.time.Clock()
 
+        # Fills the screen background with black (RGB)
         self.screen.fill((0, 0, 0))
 
         pygame.draw.line(self.screen,
@@ -298,6 +292,7 @@ class TetrisApp(object):
             2))
         self.display_msg("Score: %d\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
                          (self.r_lim + cell_size, cell_size * 5))
+
         self.draw_matrix(self.b_ground_grid, (0, 0))
         self.draw_matrix(self.board, (0, 0))
         self.draw_matrix(self.stone,

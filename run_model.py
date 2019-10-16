@@ -3,11 +3,13 @@ import numpy as np
 from dqn_agent import DQNAgent
 from tetris_game import TetrisApp
 
+# Configuration
+environment = TetrisApp()
+agent = DQNAgent()
 
-# Run dqn with Tetris
-def run_dqn():
-    environment = TetrisApp()
-    agent = DQNAgent()
+
+# Function to train a model and save it
+def run_dqn_train():
 
     batch_size = 32
     num_of_episodes = 3
@@ -48,7 +50,14 @@ def run_dqn():
             print("**********************************")
 
     agent.q_network.summary()
+    agent.save_model()
+
+
+# Function to play the game with a loaded model
+def run_dqn():
+    # Load the model you want to play with
+    agent.load_model()
 
 
 if __name__ == '__main__':
-    run_dqn()
+    run_dqn_train()
