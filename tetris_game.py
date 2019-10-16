@@ -132,6 +132,7 @@ class TetrisApp(object):
             0: lambda: self.move(-1),  # Left
             1: lambda: self.move(+1),  # Right
             2: self.rotate_stone,  # Rotate
+            3: self.instant_drop  # Instant drop
         }
 
     def new_stone(self):
@@ -230,6 +231,7 @@ class TetrisApp(object):
                     self.stone,
                     (self.stone_x, self.stone_y))
                 self.new_stone()
+                self.score += 1
                 cleared_rows = 0
                 while True:
                     for i, row in enumerate(self.board[:-1]):
@@ -245,6 +247,10 @@ class TetrisApp(object):
             self.score = -2  # -> Score for game over :)
         return False
 
+    def instant_drop(self):
+        if not self.gameover:
+            while not self.drop():
+                pass
 
     def rotate_stone(self):
         if not self.gameover:
@@ -258,7 +264,6 @@ class TetrisApp(object):
 
     def bumpiness(self):
         self.total_bumpiness = 0
-        for bump in enumerate(self.board):
 
 
 
