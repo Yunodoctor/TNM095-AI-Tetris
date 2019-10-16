@@ -1,9 +1,11 @@
-from tensorflow.keras import Sequential
-from tensorflow.keras import Embedding, Dense
+#from tensorflow.keras import Sequential
+#from tensorflow.keras import Embedding, Dense
+
+from keras.models import Sequential
+from keras.layers import Embedding, Dense
 from collections import deque
 import numpy as np
 import random
-
 
 class DQNAgent:
 
@@ -62,7 +64,7 @@ class DQNAgent:
         minibatch = random.sample(self.experience_replay, batch_size)
 
         for state, action, reward, next_state, terminated in minibatch:
-            target = self.q_network.predic(state)
+            target = self.q_network.predict(state)
 
             if terminated:
                 target[0][action] = reward

@@ -12,7 +12,7 @@ def run_dqn():
 
     batch_size = 32
     num_of_episodes = 100
-    time_steps_per_episode = 1000
+    time_steps_per_episode = 1000 # Amount of allowed actions for each game
     agent.q_network.summery()
 
     for e in range(0, num_of_episodes):
@@ -33,12 +33,8 @@ def run_dqn():
             action = agent.act(state)
 
             # Take action
-            next_state, reward, terminated, info = environment.step(action)
-
-            reward = environment.get_game_score()
-            next_state = environment.next_stone(action)
-            terminated = environment.get_terminated()
-            #next_state = np.reshape(next_state, [1, 1])
+            next_state, reward, terminated = environment.play(action)
+            next_state = np.reshape(next_state, [-1, 1])
             agent.store(state, action, reward, next_state, terminated)
 
             state = next_state
@@ -57,5 +53,4 @@ def run_dqn():
         if (e + 1) % 10 == 0:
             print("**********************************")
             print("Episode: {}".format(e + 1))
-            environment.run()
             print("**********************************")
