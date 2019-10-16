@@ -114,7 +114,7 @@ class TetrisApp(object):
         self.width = cell_size * (cols + 6)
         self.height = cell_size * rows
         self.r_lim = cell_size * cols
-        # MAke the grid in the background, 8 and 3 is the color
+        # Make the grid in the background, 8 and 3 is the color
         self.b_ground_grid = [[8 if x % 2 == y % 2 else 0 for x in range(cols)] for y in range(rows)]
 
         #  Change the font in the game
@@ -255,6 +255,13 @@ class TetrisApp(object):
                 self.stone = new_stone
         else:
             self.score = -2  # -> Score for game over :)
+
+    def bumpiness(self):
+        self.total_bumpiness = 0
+        for bump in enumerate(self.board):
+
+
+
 
     def start_game(self, terminated):
         # print(terminated)

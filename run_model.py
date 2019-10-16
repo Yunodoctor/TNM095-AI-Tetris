@@ -2,6 +2,7 @@ from builtins import range
 import numpy as np
 from dqn_agent import DQNAgent
 from tetris_game import TetrisApp
+import time
 
 # Configuration
 environment = TetrisApp()
@@ -12,7 +13,7 @@ agent = DQNAgent()
 def run_dqn_train():
 
     batch_size = 32
-    num_of_episodes = 3
+    num_of_episodes = 100
     time_steps_per_episode = 1000  # Amount of allowed actions for each game
 
     for e in range(0, num_of_episodes):
@@ -23,8 +24,9 @@ def run_dqn_train():
         state = environment.get_state()
         state = np.reshape(state, [-1, 1])
 
-        for time_step in range(time_steps_per_episode):
+        start_timer = time.time()
 
+        for time_step in range(time_steps_per_episode):
             # Run Action
             action = agent.act(state)
 
@@ -43,6 +45,13 @@ def run_dqn_train():
 
             if len(agent.experience_replay) > batch_size:
                 agent.retrain(batch_size)
+
+        end_timer = time.time()
+
+        print("**********************************")
+        print("-Time for one game: -")
+        print(end_timer - start_timer)
+        print("**********************************")
 
         if (e + 1) % 10 == 0:
             print("**********************************")

@@ -21,9 +21,7 @@ class DQNAgent:
         self.action_size = 3
 
         # Initialize discount exploration rate
-        self.epsilon = 0.1
-       # self.epsilon_min = 0
-       # self.epsilon_max = 500
+        self.epsilon = 0.2
         self.gamma = 0.6
 
         # Build networks
@@ -40,7 +38,6 @@ class DQNAgent:
         model.add(Dense(self.neurons[0], activation='relu'))
         model.add(Dense(self.neurons[0], activation='relu'))
         model.add(Dense(self.neurons[0], activation='linear'))
-        #model.add(Dense(self.action_size, activiation="linear"))
 
         model.compile(loss=self.loss, optimizer=self.optimizer)
 
