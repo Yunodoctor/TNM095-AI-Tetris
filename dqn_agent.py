@@ -9,22 +9,23 @@ import random
 
 class DQNAgent:
 
-    def __init__(self, environment):
+    def __init__(self):
         # Initialize attributes
         self.start_size = 1000
-        self.state_size = 4  # Vi tror att det ar de olika rotationerna som shapesen kan utfora
-        self._action_size = environment.action_space.n
+        self.state_size = 2
         self.memory_size = 2000
         self.experience_replay = deque(maxlen=self.memory_size)
         self.discount = 0.95
         self.neurons = [32, 32]
         self.loss = 'mse'
         self.optimizer = 'adam'
+        self.actions = [0, 1, 2]
+        self.action_size = 3
 
         # Initialize discount exploration rate
-        self.epsilon = 1
-        self.epsilon_min = 0
-        self.epsilon_max = 500
+        self.epsilon = 0.1
+       # self.epsilon_min = 0
+       # self.epsilon_max = 500
         self.gamma = 0.6
 
         # Build networks
@@ -38,9 +39,10 @@ class DQNAgent:
     def build_model(self):
         model = Sequential()
         # Embedding(layer_size, number of dimensions, length of input seq) behover vi?
-        model.add(Dense(self.neurons[0], input_dim=self.state_size, activation='relu'))
-        model.add(Dense(self.neurons[0], input_dim=self.state_size, activation='relu'))
+        model.add(Dense(self.neurons[0], activation='relu'))
+        model.add(Dense(self.neurons[0], activation='relu'))
         model.add(Dense(self.neurons[0], activation='linear'))
+        #model.add(Dense(self.action_size, activiation="linear"))
 
         model.compile(loss=self.loss, optimizer=self.optimizer)
 
@@ -52,9 +54,9 @@ class DQNAgent:
     # Exploration function
     def act(self, state):
         """Returns the best state of a given collection of states after exploring"""
-        state = np.reshape(state, [1, self.state_size])
-        if random.random() <= self.epsilon:
-            return random.random()
+        #state = np.reshape(state, [1, self.state_size])
+        if np.random.rand() <= self.epsilon:
+            return random.sample(self.actions, 1)
         else:
             q_values = self.q_network.predict(state)
             return np.argmax(q_values[0])

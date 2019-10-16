@@ -129,13 +129,9 @@ class TetrisApp(object):
         self.init_game()
 
         self.actions = {
-            0: self.quit, # Escape
-            1: lambda: self.move(-1), # Left
-            2: lambda: self.move(+1), # Right
-            3: lambda: self.drop(True), # Down
-            4: self.rotate_stone, # Rotate
-            # 5: self.toggle_pause,
-            # 'RETURN': self.instant_drop
+            0: lambda: self.move(-1), # Left
+            1: lambda: self.move(+1), # Right
+            2: self.rotate_stone,  # Rotate
         }
 
     def new_stone(self):
@@ -199,7 +195,7 @@ class TetrisApp(object):
             pygame.time.set_timer(pygame.USEREVENT + 1, new_delay)
 
     def move(self, delta_x):
-        if not self.gameover and not self.paused:
+        if not self.gameover:
             new_x = self.stone_x + delta_x
             if new_x < 0:
                 new_x = 0
@@ -259,15 +255,12 @@ class TetrisApp(object):
                 pass """
 
     def rotate_stone(self):
-        if not self.gameover and not self.paused:
+        if not self.gameover:
             new_stone = rotate_clockwise(self.stone)
             if not check_collision(self.board,
                                    new_stone,
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
-
-    def toggle_pause(self):
-        self.paused = not self.paused
 
     def start_game(self):
         if self.gameover:
@@ -278,12 +271,12 @@ class TetrisApp(object):
         return self.score
 
     def get_terminated(self):
-        if self.gameover:
-            return True
+        return self.gameover
 
     def play(self, action):
-        for action in self.actions:
-            self.actions[action]()
+        for x in self.actions:
+            if x == action:
+                self.actions[action]()
         self.render()
         return self.get_state(), self.get_game_score(), self.get_terminated()
 

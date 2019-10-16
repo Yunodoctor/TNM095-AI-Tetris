@@ -4,19 +4,19 @@ from dqn_agent import DQNAgent
 from tetris_game import TetrisApp
 import progressbar
 
-
 # Run dqn with Tetris
 def run_dqn():
     environment = TetrisApp()
-    agent = DQNAgent(environment)
+    agent = DQNAgent()
 
     batch_size = 32
     num_of_episodes = 100
     time_steps_per_episode = 1000 # Amount of allowed actions for each game
-    agent.q_network.summery()
+    # agent.q_network.summery()
 
     for e in range(0, num_of_episodes):
         """ ???? Reset the environment ???? """
+        #state = environment.reset()
         state = environment.get_state()
         state = np.reshape(state, [-1, 1])
 
@@ -54,3 +54,7 @@ def run_dqn():
             print("**********************************")
             print("Episode: {}".format(e + 1))
             print("**********************************")
+
+
+if __name__ == '__main__':
+    run_dqn()
