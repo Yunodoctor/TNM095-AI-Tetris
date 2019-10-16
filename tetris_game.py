@@ -209,14 +209,6 @@ class TetrisApp(object):
     def get_state(self):
         return self.stone_x, self.stone_y
 
-    def get_next_states(self):
-        states = {}
-        self.stone_id = self.stone
-
-        current_rotation = self.rotate_stone()
-
-        # For all rotations
-
     def quit(self):
         self.center_msg("Exiting...")
         pygame.display.update()
@@ -262,9 +254,10 @@ class TetrisApp(object):
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
 
-    def start_game(self):
-        if self.gameover:
+    def start_game(self, terminated):
+        if terminated:
             self.init_game()
+        else:
             self.gameover = False
 
     def get_game_score(self):

@@ -10,19 +10,19 @@ def run_dqn():
     agent = DQNAgent()
 
     batch_size = 32
-    num_of_episodes = 100
-    time_steps_per_episode = 1000 # Amount of allowed actions for each game
+    num_of_episodes = 10
+    time_steps_per_episode = 100  # Amount of allowed actions for each game
     # agent.q_network.summery()
 
     for e in range(0, num_of_episodes):
         """ ???? Reset the environment ???? """
-        #state = environment.reset()
-        state = environment.get_state()
-        state = np.reshape(state, [-1, 1])
 
         # Initialize variables
-        reward = 0
         terminated = False
+
+        environment.start_game(terminated)
+        state = environment.get_state()
+        state = np.reshape(state, [-1, 1])
 
         bar = progressbar.ProgressBar(maxval=time_steps_per_episode / 10,
                                       widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
