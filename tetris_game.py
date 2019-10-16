@@ -144,6 +144,7 @@ class TetrisApp(object):
                            self.stone,
                            (self.stone_x, self.stone_y)):
             self.gameover = True
+            self.score = -2  # -> Score for game over :)
 
     def init_game(self):
         self.board = create_board()
@@ -207,6 +208,8 @@ class TetrisApp(object):
                                    self.stone,
                                    (new_x, self.stone_y)):
                 self.stone_x = new_x
+        else:
+            self.score = -2  # -> Score for game over :)
 
     def get_state(self):
         return self.stone_x, self.stone_y
@@ -238,6 +241,8 @@ class TetrisApp(object):
                         break
                 self.add_cl_lines(cleared_rows)
                 return True
+        else:
+            self.score = -2  # -> Score for game over :)
         return False
 
     """def instant_drop(self):
@@ -252,16 +257,15 @@ class TetrisApp(object):
                                    new_stone,
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
+        else:
+            self.score = -2  # -> Score for game over :)
 
     def start_game(self, terminated):
         # print(terminated)
         self.gameover = terminated
 
-        if self.gameover == False:
+        if not self.gameover:
             self.init_game()
-        # else:
-            # self.gameover = True
-            #  self.score -= 2 -> Score for game over :)
 
     def get_game_score(self):
         return self.score
@@ -284,9 +288,6 @@ class TetrisApp(object):
         dont_burn_my_cpu = pygame.time.Clock()
 
         self.screen.fill((0, 0, 0))
-
-        """if self.gameover:
-            self.score -= 2 Denna ska vara i step tror vi när kommer run fatta att det är game over?"""
 
         pygame.draw.line(self.screen,
                          (255, 255, 255),
