@@ -232,7 +232,9 @@ class TetrisApp(object):
 
     def drop(self, boolean):
         if not self.gameover and not self.paused:
-            # self.score += 1 if boolean else 0
+
+           #self.score += 1 if boolean else 0
+
             self.stone_y += 1
             if check_collision(self.board,
                                self.stone,
@@ -260,6 +262,7 @@ class TetrisApp(object):
             while not self.drop(True):
                 pass """
 
+
     def rotate_stone(self):
         if not self.gameover and not self.paused:
             new_stone = rotate_clockwise(self.stone)
@@ -285,7 +288,6 @@ class TetrisApp(object):
 
     def get_actions(self):
         return self.key_actions
-
 
     def run(self): # Skicka in x och rotation?
 
