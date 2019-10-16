@@ -10,8 +10,8 @@ def run_dqn():
     agent = DQNAgent()
 
     batch_size = 32
-    num_of_episodes = 10
-    time_steps_per_episode = 100  # Amount of allowed actions for each game
+    num_of_episodes = 3
+    time_steps_per_episode = 1000  # Amount of allowed actions for each game
     # agent.q_network.summery()
 
     for e in range(0, num_of_episodes):
@@ -26,9 +26,11 @@ def run_dqn():
 
         bar = progressbar.ProgressBar(maxval=time_steps_per_episode / 10,
                                       widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+
         bar.start()
 
         for timestep in range(time_steps_per_episode):
+
             # Run Action
             action = agent.act(state)
 
@@ -40,6 +42,7 @@ def run_dqn():
             state = next_state
 
             if terminated:
+                print("\nI DIIIIIIEEEED :( :(")
                 agent.alighn_target_model()
                 break
 
@@ -50,10 +53,12 @@ def run_dqn():
                 bar.update(timestep / 10 + 1)
 
         bar.finish()
-        if (e + 1) % 10 == 0:
-            print("**********************************")
-            print("Episode: {}".format(e + 1))
-            print("**********************************")
+
+        # if (e + 1) % 10 == 0:
+        print("**********************************")
+        print("Episode: {}".format(e + 1))
+        print("**********************************")
+
 
 
 if __name__ == '__main__':

@@ -72,7 +72,7 @@ def rotate_clockwise(shape):
 
 def check_collision(board, shape, offset):
     off_x, off_y = offset
-    print(offset)
+    # print(offset)
     for cy, row in enumerate(shape):
         for cx, cell in enumerate(row):
             try:
@@ -175,7 +175,9 @@ class TetrisApp(object):
     def draw_matrix(self, matrix, offset):
         off_x, off_y = offset
         for y, row in enumerate(matrix):
+
             for x, val in enumerate(row):
+
                 if val:
                     pygame.draw.rect(self.screen, colors[val],
                                      pygame.Rect((off_x + x) * cell_size, (off_y + y) * cell_size, cell_size_inner,
@@ -252,10 +254,14 @@ class TetrisApp(object):
                 self.stone = new_stone
 
     def start_game(self, terminated):
-        if terminated:
+        # print(terminated)
+        self.gameover = terminated
+
+        if self.gameover == False:
             self.init_game()
-        else:
-            self.gameover = False
+        # else:
+            # self.gameover = True
+            #  self.score -= 2 -> Score for game over :)
 
     def get_game_score(self):
         return self.score
