@@ -61,12 +61,13 @@ def run_dqn_train():
 
         print("**********************************")
         print("Time for game: ", e)
-        print(total_time, "Seconds")
+        print("Episode time: ", total_time, "Seconds")
+        print("Episodes tota reward: ", episodes_reward)
         print("**********************************")
 
     print("______________________________________")
     print("The highest reward was: ", best_episode[0], "in game: ", best_episode[1])
-    print("With the time of", best_episode[2])
+    print("With the time", best_episode[2], "Seconds")
     print("______________________________________")
     agent.q_network.summary()
     agent.save_model()

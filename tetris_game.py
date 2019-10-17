@@ -258,7 +258,7 @@ class TetrisApp(object):
         return False
 
     def instant_drop(self):
-        self.score += 1
+        self.reward += 1
         if not self.gameover:
             while not self.drop():
                 pass
@@ -275,7 +275,7 @@ class TetrisApp(object):
 
     # Calculate the bumpiness in the board
     def bumpiness(self):
-        self.total_bumpiness = 0
+        total_bumpiness = 0
         for c in zip(*self.board):
 
             for val in c:
@@ -285,13 +285,13 @@ class TetrisApp(object):
                     break
             self.col = abs(self.bump_counter - rows)
             if not np.isnan(self.prev_col):
-                self.total_bumpiness = self.total_bumpiness + abs(self.prev_col - self.col)
+                total_bumpiness = total_bumpiness + abs(self.prev_col - self.col)
 
             self.prev_col = self.col
             self.col = 0
             self.bump_counter = 0
 
-        return self.total_bumpiness
+        return total_bumpiness
 
     """def number_of_holes(self):
         self.total_holes = 0
@@ -320,11 +320,14 @@ class TetrisApp(object):
             self.init_game()
 
     def get_reward(self):
-        action_reward = self.reward + self.score - 0.2*self.total_bumpiness
+        bumpiness = self.bumpiness()
+        action_reward = self.reward + self.score - 0.2*bumpiness
+        print(action_reward)
         return action_reward
 
     def reset_reward(self):
         self.reward = 0
+        self.score = 0
 
     def get_terminated(self):
         return self.gameover
@@ -337,7 +340,7 @@ class TetrisApp(object):
 
         self.render_game()
         self.drop()
-        return self.get_state(), self.get_reward(), self.get_terminated(), self.total_bumpiness
+        return self.get_state(), self.get_reward(), self.get_terminated(), self.bumpiness()
 
     def render_game(self):  # Skicka in x och rotation?
         dont_burn_my_cpu = pygame.time.Clock()
@@ -352,7 +355,7 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.total_bumpiness),
+        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness()),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))
