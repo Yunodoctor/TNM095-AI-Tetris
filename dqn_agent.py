@@ -20,7 +20,7 @@ class DQNAgent:
         self.action_size = 4
 
         # Initialize discount exploration rate
-        self.epsilon = 0.5
+        self.epsilon = 0.9
         self.gamma = 0.6
 
         # Build networks
@@ -28,8 +28,8 @@ class DQNAgent:
         self.target_network = self.build_model()
         self.alighn_target_model()
 
-    def store(self, state, action, reward, next_state, terminated, bumpiness):
-        self.experience_replay.append((state, action, reward, next_state, terminated, bumpiness))
+    def store(self, state, action, reward, next_state, terminated, bumpiness, total_height):
+        self.experience_replay.append((state, action, reward, next_state, terminated, bumpiness, total_height))
 
     def build_model(self):
         model = Sequential()
@@ -59,7 +59,7 @@ class DQNAgent:
         """Training the agent"""
         minibatch = random.sample(self.experience_replay, batch_size)
 
-        for state, action, reward, next_state, terminated, bumpiness in minibatch:
+        for state, action, reward, next_state, terminated, bumpiness, total_height in minibatch:
             target = self.q_network.predict(state)
 
             if terminated:

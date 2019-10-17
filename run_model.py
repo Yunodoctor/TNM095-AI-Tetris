@@ -13,7 +13,7 @@ agent = DQNAgent()
 def run_dqn_train():
 
     batch_size = 32
-    num_of_episodes = 500
+    num_of_episodes = 1000
     time_steps_per_episode = 20000  # Amount of allowed actions for each game
     best_episode = [-100, 0, 0]  # Reward, Episode, Time
 
@@ -35,11 +35,11 @@ def run_dqn_train():
             action = agent.act(state)
 
             # Take action
-            next_state, reward, terminated, bumpiness = environment.play(action)
+            next_state, reward, terminated, bumpiness, total_height = environment.play(action)
             next_state = np.reshape(next_state, [-1, 1])
 
-            agent.store(state, action, reward, next_state, terminated, bumpiness)
-
+            agent.store(state, action, reward, next_state, terminated, bumpiness, total_height)
+            print(total_height)
             state = next_state
             episodes_reward += reward
 

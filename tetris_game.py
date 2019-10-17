@@ -164,6 +164,12 @@ class TetrisApp(object):
         self.col = 0
         self.bump_counter = 0
 
+        # Init variables for the function aggregated height
+        self.aggregated_height = 0
+        self.height_prev_col = float('NaN')  # Not to start outside of board
+        self.height_col = 0
+        self.height_counter = 0
+
         # Init variables in for number_of_holes function
         """self.total_holes = 0
         self.prev_cell = float('NaN')  # Not to start outside of board
@@ -241,6 +247,7 @@ class TetrisApp(object):
                 self.new_stone()
                 # self.reward += 1  # Reward when a brick is seated
                 self.bumpiness()  # Calculate bumpiness when a stone is seated
+                self.total_height()
                 # self.number_of_holes()  # Calculate number of holes when a stone is seated
                 cleared_rows = 0
                 while True:
@@ -272,6 +279,26 @@ class TetrisApp(object):
                 self.stone = new_stone
         else:
             self.reward = -2  # -> Score for game over :)
+
+    # Sum and maximum height of the board
+    def total_height(self):
+        self.aggregated_height = 0
+        for c in zip(*self.board):
+
+            for val in c:
+                if val == 0:
+                    self.height_counter += 1
+                else:
+                    break
+            self.height_col = abs(self.height_counter - rows)
+            if not np.isnan(self.height_prev_col):
+                self.aggregated_height = self.aggregated_height + self.height_col
+
+            self.height_prev_col = self.height_col
+            self.height_col = 0
+            self.height_counter = 0
+
+        return self.aggregated_height
 
     # Calculate the bumpiness in the board
     def bumpiness(self):
@@ -341,7 +368,7 @@ class TetrisApp(object):
 
         self.render_game()
         self.drop()
-        return self.get_state(), self.get_reward(), self.get_terminated(), self.bumpiness()
+        return self.get_state(), self.get_reward(), self.get_terminated(), self.bumpiness(), self.total_height()
 
     def render_game(self):  # Skicka in x och rotation?
         dont_burn_my_cpu = pygame.time.Clock()
@@ -356,7 +383,7 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness()),
+        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d\nTotal height: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness(), self.total_height()),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))
