@@ -13,6 +13,7 @@ from random import randrange as rand
 
 import pygame
 import sys
+import numpy as np
 
 # The configuration
 cell_size = 30
@@ -114,6 +115,7 @@ class TetrisApp(object):
         self.width = cell_size * (cols + 6)
         self.height = cell_size * rows
         self.r_lim = cell_size * cols
+
         # Make the grid in the background, 8 and 3 is the color
         self.b_ground_grid = [[8 if x % 2 == y % 2 else 0 for x in range(cols)] for y in range(rows)]
 
@@ -145,14 +147,21 @@ class TetrisApp(object):
                            self.stone,
                            (self.stone_x, self.stone_y)):
             self.gameover = True
-            self.score = -2  # -> Score for game over :)
+            self.reward = -2  # -> Score for game over :)
 
     def init_game(self):
         self.board = create_board()
         self.new_stone()
         self.level = 1
         self.score = 0
+        self.reward = 0
         self.lines = 0
+
+        # Init variables for the function bumpiness
+        self.total_bumpiness = 0
+        self.prev_col = float('NaN')
+        self.col = 0
+        self.counter = 0
         pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 
     def display_msg(self, msg, top_left):
@@ -210,7 +219,7 @@ class TetrisApp(object):
                                    (new_x, self.stone_y)):
                 self.stone_x = new_x
         else:
-            self.score = -2  # -> Score for game over :)
+            self.reward = -2  # -> Score for game over :)
 
     def get_state(self):
         return self.stone_x, self.stone_y
@@ -231,7 +240,8 @@ class TetrisApp(object):
                     self.stone,
                     (self.stone_x, self.stone_y))
                 self.new_stone()
-                self.score += 1
+                self.reward += 4  # Reward when a brick is seated
+                self.bumpiness()  # Calculate bumpiness when a stone is seated
                 cleared_rows = 0
                 while True:
                     for i, row in enumerate(self.board[:-1]):
@@ -244,7 +254,7 @@ class TetrisApp(object):
                 self.add_cl_lines(cleared_rows)
                 return True
         else:
-            self.score = -2  # -> Score for game over :)
+            self.reward = -2  # -> Score for game over :)
         return False
 
     def instant_drop(self):
@@ -260,28 +270,27 @@ class TetrisApp(object):
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
         else:
-            self.score = -2  # -> Score for game over :)
+            self.reward = -2  # -> Score for game over :)
 
     # Calculate the bumpiness in the board
     def bumpiness(self):
         self.total_bumpiness = 0
-        prev_col = 0
-        col = 0
-        counter = 0
 
         for c in zip(*self.board):
+
             for val in c:
                 if val == 0:
-                    counter += 1
+                    self.counter += 1
                 else:
-                    col = abs(counter-rows)
+                    break
+            self.col = abs(self.counter - rows)
+            if not np.isnan(self.prev_col):
+                self.total_bumpiness = self.total_bumpiness + abs(self.prev_col - self.col)
 
-                if not prev_col == 0:
-                    self.total_bumpiness + self.total_bumpiness + abs(prev_col-col)
-                prev_col = col
-                col = 0
-                counter = 0
-                break
+            self.prev_col = self.col
+            self.col = 0
+            self.counter = 0
+
         return self.total_bumpiness
 
     def start_game(self, terminated):
@@ -291,20 +300,22 @@ class TetrisApp(object):
         if not self.gameover:
             self.init_game()
 
-    def get_game_score(self):
-        return self.score
+    def get_reward(self):
+        self.reward = self.reward + self.score - 0.2*self.total_bumpiness
+        return self.reward
 
     def get_terminated(self):
         return self.gameover
 
     def play(self, action):
+        self.action_from_agent = action
         for x in self.actions:
-            if x == action:
-                self.actions[action]()
+            if x == self.action_from_agent:
+                self.actions[self.action_from_agent]()
 
         self.render_game()
         self.drop()
-        return self.get_state(), self.get_game_score(), self.get_terminated(), self.bumpiness()
+        return self.get_state(), self.get_reward(), self.get_terminated(), self.total_bumpiness
 
     def render_game(self):  # Skicka in x och rotation?
         dont_burn_my_cpu = pygame.time.Clock()
@@ -319,7 +330,7 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLevel: %d\nLines: %d" % (self.score, self.level, self.lines),
+        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nReward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.reward, self.action_from_agent, self.total_bumpiness),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))
