@@ -13,8 +13,9 @@ agent = DQNAgent()
 def run_dqn_train():
 
     batch_size = 32
-    num_of_episodes = 100
-    time_steps_per_episode = 1000  # Amount of allowed actions for each game
+    num_of_episodes = 200
+    time_steps_per_episode = 10000  # Amount of allowed actions for each game
+    highest_reward = 0
 
     for e in range(0, num_of_episodes):
         # Initialize variables
@@ -29,13 +30,16 @@ def run_dqn_train():
         for time_step in range(time_steps_per_episode):
             # Run Action
             action = agent.act(state)
-            print("\n Action: ", action)
 
             # Take action
-            next_state, reward, terminated = environment.play(action)
+            next_state, reward, terminated, bumpiness = environment.play(action)
             next_state = np.reshape(next_state, [-1, 1])
 
-            agent.store(state, action, reward, next_state, terminated)
+            agent.store(state, action, reward, next_state, terminated, bumpiness)
+
+            # Get the highest reward
+            if reward > highest_reward:
+                highest_reward = reward
 
             state = next_state
 
@@ -59,6 +63,7 @@ def run_dqn_train():
             print("Episode: {}".format(e + 1))
             print("**********************************")
 
+    print("The highest reward was: ", highest_reward)
     agent.q_network.summary()
     agent.save_model()
 

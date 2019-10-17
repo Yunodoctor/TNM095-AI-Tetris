@@ -10,7 +10,6 @@ class DQNAgent:
     def __init__(self):
         # Initialize attributes
         self.start_size = 1000
-        self.state_size = 2
         self.memory_size = 2000
         self.experience_replay = deque(maxlen=self.memory_size)
         self.discount = 0.95
@@ -29,8 +28,8 @@ class DQNAgent:
         self.target_network = self.build_model()
         self.alighn_target_model()
 
-    def store(self, state, action, reward, next_state, terminated):
-        self.experience_replay.append((state, action, reward, next_state, terminated))
+    def store(self, state, action, reward, next_state, terminated, bumpiness):
+        self.experience_replay.append((state, action, reward, next_state, terminated, bumpiness))
 
     def build_model(self):
         model = Sequential()
@@ -60,7 +59,7 @@ class DQNAgent:
         """Training the agent"""
         minibatch = random.sample(self.experience_replay, batch_size)
 
-        for state, action, reward, next_state, terminated in minibatch:
+        for state, action, reward, next_state, terminated, bumpiness in minibatch:
             target = self.q_network.predict(state)
 
             if terminated:
@@ -73,8 +72,9 @@ class DQNAgent:
 
     def save_model(self):
         # save model and architecture to single file
-        self.q_network.save("q_network.h5")
-        print("Saved model to disk")
+        # self.q_network.save("q_network.h5")
+        # print("Saved model to disk")
+        print("Not saved")
 
     def load_model(self):
         # load model

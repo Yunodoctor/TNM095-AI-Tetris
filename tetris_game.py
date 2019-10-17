@@ -19,7 +19,7 @@ cell_size = 30
 cell_size_inner = 25
 cols = 10
 rows = 22
-max_fps = 30
+max_fps = 60
 font_size = 16
 pygame.init()
 pygame.mixer.init()
@@ -212,11 +212,6 @@ class TetrisApp(object):
         else:
             self.score = -2  # -> Score for game over :)
 
-    def checked_collision(self, board, shape, offset):
-        # Give score if a block is seated
-        self.score += 1
-        check_collision(board, shape, offset)
-
     def get_state(self):
         return self.stone_x, self.stone_y
 
@@ -267,11 +262,27 @@ class TetrisApp(object):
         else:
             self.score = -2  # -> Score for game over :)
 
+    # Calculate the bumpiness in the board
     def bumpiness(self):
         self.total_bumpiness = 0
+        prev_col = 0
+        col = 0
+        counter = 0
 
+        for c in zip(*self.board):
+            for val in c:
+                if val == 0:
+                    counter += 1
+                else:
+                    col = abs(counter-rows)
 
-
+                if not prev_col == 0:
+                    self.total_bumpiness + self.total_bumpiness + abs(prev_col-col)
+                prev_col = col
+                col = 0
+                counter = 0
+                break
+        return self.total_bumpiness
 
     def start_game(self, terminated):
         # print(terminated)
@@ -290,9 +301,10 @@ class TetrisApp(object):
         for x in self.actions:
             if x == action:
                 self.actions[action]()
+
         self.render_game()
         self.drop()
-        return self.get_state(), self.get_game_score(), self.get_terminated()
+        return self.get_state(), self.get_game_score(), self.get_terminated(), self.bumpiness()
 
     def render_game(self):  # Skicka in x och rotation?
         dont_burn_my_cpu = pygame.time.Clock()
