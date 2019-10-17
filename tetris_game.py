@@ -17,7 +17,7 @@ import numpy as np
 
 # The configuration
 cell_size = 30
-cell_size_inner = 25
+cell_size_inner = 30
 cols = 10
 rows = 22
 max_fps = 60
@@ -156,13 +156,18 @@ class TetrisApp(object):
         self.score = 0
         self.reward = 0
         self.lines = 0
+        self.action_reward = 0
 
         # Init variables for the function bumpiness
         self.total_bumpiness = 0
-        self.prev_col = float('NaN')
+        self.prev_col = float('NaN')  # Not to start outside of board
         self.col = 0
-        self.counter = 0
-        pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+        self.bump_counter = 0
+
+        # Init variables in for number_of_holes function
+        """self.total_holes = 0
+        self.prev_cell = float('NaN')  # Not to start outside of board
+        self.holes_counter = 0"""
 
     def display_msg(self, msg, top_left):
         x, y = top_left
@@ -198,14 +203,8 @@ class TetrisApp(object):
                                                  cell_size), 2)
 
     def add_cl_lines(self, n):
-        line_scores = [0, 40, 100, 300, 1200]
         self.lines += n
-        self.score += line_scores[n] * self.level
-        if self.lines >= self.level * 6:
-            self.level += 1
-            new_delay = 1000 - 50 * (self.level - 1)
-            new_delay = 100 if new_delay < 100 else new_delay
-            pygame.time.set_timer(pygame.USEREVENT + 1, new_delay)
+        self.score += n*10
 
     def move(self, delta_x):
         if not self.gameover:
@@ -240,8 +239,9 @@ class TetrisApp(object):
                     self.stone,
                     (self.stone_x, self.stone_y))
                 self.new_stone()
-                self.reward += 4  # Reward when a brick is seated
+                # self.reward += 1  # Reward when a brick is seated
                 self.bumpiness()  # Calculate bumpiness when a stone is seated
+                # self.number_of_holes()  # Calculate number of holes when a stone is seated
                 cleared_rows = 0
                 while True:
                     for i, row in enumerate(self.board[:-1]):
@@ -258,6 +258,7 @@ class TetrisApp(object):
         return False
 
     def instant_drop(self):
+        self.score += 1
         if not self.gameover:
             while not self.drop():
                 pass
@@ -275,23 +276,41 @@ class TetrisApp(object):
     # Calculate the bumpiness in the board
     def bumpiness(self):
         self.total_bumpiness = 0
-
         for c in zip(*self.board):
 
             for val in c:
                 if val == 0:
-                    self.counter += 1
+                    self.bump_counter += 1
                 else:
                     break
-            self.col = abs(self.counter - rows)
+            self.col = abs(self.bump_counter - rows)
             if not np.isnan(self.prev_col):
                 self.total_bumpiness = self.total_bumpiness + abs(self.prev_col - self.col)
 
             self.prev_col = self.col
             self.col = 0
-            self.counter = 0
+            self.bump_counter = 0
 
         return self.total_bumpiness
+
+    """def number_of_holes(self):
+        self.total_holes = 0
+
+        for col in zip(*self.board):
+            for val in col:
+
+                if val == 0 and not np.isnan(self.prev_cell) and not self.prev_cell != 0:
+                    self.holes_counter += 1
+                    print(self.holes_counter)
+
+            self.prev_cell = val
+            print("Next column!")
+
+        self.total_holes = self.holes_counter
+        print("Number of holes: ", self.total_holes)
+        return self.total_holes"""
+
+
 
     def start_game(self, terminated):
         # print(terminated)
@@ -301,8 +320,11 @@ class TetrisApp(object):
             self.init_game()
 
     def get_reward(self):
-        self.reward = self.reward + self.score - 0.2*self.total_bumpiness
-        return self.reward
+        action_reward = self.reward + self.score - 0.2*self.total_bumpiness
+        return action_reward
+
+    def reset_reward(self):
+        self.reward = 0
 
     def get_terminated(self):
         return self.gameover
@@ -330,7 +352,7 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nReward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.reward, self.action_from_agent, self.total_bumpiness),
+        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.total_bumpiness),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))

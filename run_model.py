@@ -13,13 +13,15 @@ agent = DQNAgent()
 def run_dqn_train():
 
     batch_size = 32
-    num_of_episodes = 200
+    num_of_episodes = 20
     time_steps_per_episode = 10000  # Amount of allowed actions for each game
-    highest_reward = 0
+    best_episode = [-100, 0, 0]  # Reward, Episode, Time
+
 
     for e in range(0, num_of_episodes):
         # Initialize variables
         terminated = False
+        episodes_reward = 0
 
         environment.start_game(terminated)
         state = environment.get_state()
@@ -29,6 +31,7 @@ def run_dqn_train():
 
         for time_step in range(time_steps_per_episode):
             # Run Action
+            environment.reset_reward()
             action = agent.act(state)
 
             # Take action
@@ -37,14 +40,10 @@ def run_dqn_train():
 
             agent.store(state, action, reward, next_state, terminated, bumpiness)
 
-            # Get the highest reward
-            if reward > highest_reward:
-                highest_reward = reward
-
             state = next_state
+            episodes_reward += reward
 
             if terminated:
-                print("\n\nI DIED :( :(")
                 agent.alighn_target_model()
                 break
 
@@ -52,18 +51,23 @@ def run_dqn_train():
                 agent.retrain(batch_size)
 
         end_timer = time.time()
+        total_time = end_timer - start_timer
+
+        # Get the highest reward
+        if episodes_reward > best_episode[0]:
+            best_episode[0] = episodes_reward
+            best_episode[1] = e
+            best_episode[2] = total_time
 
         print("**********************************")
-        print("-Time for one game: -")
-        print(end_timer - start_timer)
+        print("Time for game: ", e)
+        print(total_time, "Seconds")
         print("**********************************")
 
-        if (e + 1) % 10 == 0:
-            print("**********************************")
-            print("Episode: {}".format(e + 1))
-            print("**********************************")
-
-    print("The highest reward was: ", highest_reward)
+    print("______________________________________")
+    print("The highest reward was: ", best_episode[0], "in game: ", best_episode[1])
+    print("With the time of", best_episode[2])
+    print("______________________________________")
     agent.q_network.summary()
     agent.save_model()
 

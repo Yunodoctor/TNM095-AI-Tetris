@@ -20,7 +20,7 @@ class DQNAgent:
         self.action_size = 4
 
         # Initialize discount exploration rate
-        self.epsilon = 0.5
+        self.epsilon = 0.2
         self.gamma = 0.6
 
         # Build networks
@@ -72,9 +72,9 @@ class DQNAgent:
 
     def save_model(self):
         # save model and architecture to single file
-        # self.q_network.save("q_network.h5")
-        # print("Saved model to disk")
-        print("Not saved")
+        self.q_network.save("big_q_network.h5")
+        print("Saved model to disk")
+        # print("Not saved")
 
     def load_model(self):
         # load model
