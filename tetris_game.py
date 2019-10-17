@@ -347,7 +347,7 @@ class TetrisApp(object):
             self.init_game()
 
     def get_reward(self):
-        self.action_reward = self.reward + self.score - 0.2*self.bumpiness()
+        self.action_reward = self.reward + self.score - 0.2*self.bumpiness() + self.score - 0.1*self.total_height()
         # print(self.action_reward)
         return self.action_reward
 
@@ -356,6 +356,7 @@ class TetrisApp(object):
         self.score = 0
         self.action_reward = 0
         self.total_bumpiness = 0
+        self.aggregated_height = 0
 
     def get_terminated(self):
         return self.gameover

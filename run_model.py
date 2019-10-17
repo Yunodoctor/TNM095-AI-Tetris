@@ -37,9 +37,7 @@ def run_dqn_train():
             # Take action
             next_state, reward, terminated, bumpiness, total_height = environment.play(action)
             next_state = np.reshape(next_state, [-1, 1])
-
             agent.store(state, action, reward, next_state, terminated, bumpiness, total_height)
-            print(total_height)
             state = next_state
             episodes_reward += reward
 
