@@ -275,7 +275,7 @@ class TetrisApp(object):
 
     # Calculate the bumpiness in the board
     def bumpiness(self):
-        total_bumpiness = 0
+        self.total_bumpiness = 0
         for c in zip(*self.board):
 
             for val in c:
@@ -285,13 +285,13 @@ class TetrisApp(object):
                     break
             self.col = abs(self.bump_counter - rows)
             if not np.isnan(self.prev_col):
-                total_bumpiness = total_bumpiness + abs(self.prev_col - self.col)
+                self.total_bumpiness = self.total_bumpiness + abs(self.prev_col - self.col)
 
             self.prev_col = self.col
             self.col = 0
             self.bump_counter = 0
 
-        return total_bumpiness
+        return self.total_bumpiness
 
     """def number_of_holes(self):
         self.total_holes = 0
@@ -320,14 +320,15 @@ class TetrisApp(object):
             self.init_game()
 
     def get_reward(self):
-        bumpiness = self.bumpiness()
-        action_reward = self.reward + self.score - 0.2*bumpiness
-        print(action_reward)
-        return action_reward
+        self.action_reward = self.reward + self.score - 0.2*self.bumpiness()
+        # print(self.action_reward)
+        return self.action_reward
 
     def reset_reward(self):
         self.reward = 0
         self.score = 0
+        self.action_reward = 0
+        self.total_bumpiness = 0
 
     def get_terminated(self):
         return self.gameover
