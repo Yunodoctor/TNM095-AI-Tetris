@@ -17,7 +17,7 @@ import numpy as np
 
 # The configuration
 cell_size = 30
-cell_size_inner = 30
+cell_size_inner = 25
 cols = 10
 rows = 22
 max_fps = 60
@@ -64,6 +64,7 @@ tetris_shapes = [
 # ================================================================================================#
 #                                       Function Definitions                                     #
 # ================================================================================================#
+
 
 def rotate_clockwise(shape):
     return [[shape[y][x]
@@ -374,6 +375,10 @@ class TetrisApp(object):
     def render_game(self):  # Skicka in x och rotation?
         dont_burn_my_cpu = pygame.time.Clock()
 
+        # Need to just handle event in pygame to be able to move window
+        for event in pygame.event.get():
+            pass
+
         # Fills the screen background with black (RGB)
         self.screen.fill((0, 0, 0))
 
@@ -384,7 +389,7 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLevel: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d\nTotal height: %d" % (self.score, self.level, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness(), self.total_height()),
+        self.display_msg("Score: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d\nTotal height: %d" % (self.score, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness(), self.total_height()),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))

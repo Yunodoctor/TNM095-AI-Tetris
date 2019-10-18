@@ -20,7 +20,7 @@ class DQNAgent:
         self.action_size = 4
 
         # Initialize discount exploration rate
-        self.epsilon = 0.9
+        self.epsilon = 0.2
         self.gamma = 0.6
 
         # Build networks

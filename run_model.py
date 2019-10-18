@@ -13,7 +13,7 @@ agent = DQNAgent()
 def run_dqn_train():
 
     batch_size = 32
-    num_of_episodes = 1000
+    num_of_episodes = 10
     time_steps_per_episode = 20000  # Amount of allowed actions for each game
     best_episode = [-100, 0, 0]  # Reward, Episode, Time
 
@@ -58,9 +58,9 @@ def run_dqn_train():
             best_episode[2] = total_time
 
         print("**********************************")
-        print("Time for game: ", e)
-        print("Episode time: ", total_time, "Seconds")
-        print("Episodes tota reward: ", episodes_reward)
+        print("Episode/Game: ", e)
+        print("Total time: ", total_time, "Seconds")
+        print("Episodes total reward: ", episodes_reward)
         print("**********************************")
 
     print("______________________________________")
