@@ -8,18 +8,16 @@
 # By          : Ronja Faltin                                                                    #
 # ===============================================================================================#
 
-
 from random import randrange as rand
 
 import pygame
-import sys
 import numpy as np
 
 # The configuration
 cell_size = 30
 cell_size_inner = 25
-cols = 10
-rows = 22
+cols = 6
+rows = 12
 max_fps = 60
 font_size = 16
 pygame.init()
@@ -148,16 +146,15 @@ class TetrisApp(object):
                            self.stone,
                            (self.stone_x, self.stone_y)):
             self.gameover = True
-            self.reward = -2  # -> Score for game over :)
 
     def init_game(self):
         self.board = create_board()
         self.new_stone()
         self.level = 1
         self.score = 0
-        self.reward = 0
         self.lines = 0
         self.action_reward = 0
+        self.stop_ai = False
 
         # Init variables for the function bumpiness
         self.total_bumpiness = 0
@@ -170,11 +167,6 @@ class TetrisApp(object):
         self.height_prev_col = float('NaN')  # Not to start outside of board
         self.height_col = 0
         self.height_counter = 0
-
-        # Init variables in for number_of_holes function
-        """self.total_holes = 0
-        self.prev_cell = float('NaN')  # Not to start outside of board
-        self.holes_counter = 0"""
 
     def display_msg(self, msg, top_left):
         x, y = top_left
@@ -211,7 +203,7 @@ class TetrisApp(object):
 
     def add_cl_lines(self, n):
         self.lines += n
-        self.score += n*10
+        # self.score += n*20 # -> Is now in get score instead
 
     def move(self, delta_x):
         if not self.gameover:
@@ -224,16 +216,13 @@ class TetrisApp(object):
                                    self.stone,
                                    (new_x, self.stone_y)):
                 self.stone_x = new_x
-        else:
-            self.reward = -2  # -> Score for game over :)
 
     def get_state(self):
         return self.stone_x, self.stone_y
 
     def quit(self):
         self.center_msg("Exiting...")
-        pygame.display.update()
-        sys.exit()
+        return self.stop_ai
 
     def drop(self):
         if not self.gameover:
@@ -246,9 +235,9 @@ class TetrisApp(object):
                     self.stone,
                     (self.stone_x, self.stone_y))
                 self.new_stone()
-                # self.reward += 1  # Reward when a brick is seated
                 self.bumpiness()  # Calculate bumpiness when a stone is seated
                 self.total_height()
+                self.number_of_holes()
                 # self.number_of_holes()  # Calculate number of holes when a stone is seated
                 cleared_rows = 0
                 while True:
@@ -261,12 +250,9 @@ class TetrisApp(object):
                         break
                 self.add_cl_lines(cleared_rows)
                 return True
-        else:
-            self.reward = -2  # -> Score for game over :)
         return False
 
     def instant_drop(self):
-        self.reward += 1
         if not self.gameover:
             while not self.drop():
                 pass
@@ -278,8 +264,6 @@ class TetrisApp(object):
                                    new_stone,
                                    (self.stone_x, self.stone_y)):
                 self.stone = new_stone
-        else:
-            self.reward = -2  # -> Score for game over :)
 
     # Sum and maximum height of the board
     def total_height(self):
@@ -321,24 +305,24 @@ class TetrisApp(object):
 
         return self.total_bumpiness
 
-    """def number_of_holes(self):
-        self.total_holes = 0
+    def number_of_holes(self):
+        total_holes = 0
+        holes_counter = 0
+        prev_cell = float('NaN')
 
         for col in zip(*self.board):
             for val in col:
+                if not np.isnan(prev_cell):  # If prev cell is not a number (For every new column)
+                    if val == 0 and prev_cell != 0:
+                        holes_counter += 1
+                prev_cell = val
 
-                if val == 0 and not np.isnan(self.prev_cell) and not self.prev_cell != 0:
-                    self.holes_counter += 1
-                    print(self.holes_counter)
+            # Do this for every column
+            total_holes += holes_counter
+            holes_counter = 0
+            prev_cell = float('NaN')
 
-            self.prev_cell = val
-            print("Next column!")
-
-        self.total_holes = self.holes_counter
-        print("Number of holes: ", self.total_holes)
-        return self.total_holes"""
-
-
+        return total_holes
 
     def start_game(self, terminated):
         # print(terminated)
@@ -348,12 +332,20 @@ class TetrisApp(object):
             self.init_game()
 
     def get_reward(self):
-        self.action_reward = self.reward + self.score - 0.2*self.bumpiness() + self.score - 0.1*self.total_height()
-        # print(self.action_reward)
+        # Factors from 'Tetris AI – The (Near) Perfect Bot'
+        a = -0.510066
+        b = 0.760666
+        c = -0.35663
+        d = -0.184483
+
+        self.action_reward = a * self.total_height() + b * self.lines + c * self.number_of_holes() + d * self.bumpiness()
+
         return self.action_reward
 
+    def get_number_of_lines(self):
+        return self.lines
+
     def reset_reward(self):
-        self.reward = 0
         self.score = 0
         self.action_reward = 0
         self.total_bumpiness = 0
@@ -370,14 +362,19 @@ class TetrisApp(object):
 
         self.render_game()
         self.drop()
-        return self.get_state(), self.get_reward(), self.get_terminated(), self.bumpiness(), self.total_height()
 
-    def render_game(self):  # Skicka in x och rotation?
+        # Declared new variables to make the return-line a reasonable length
+        state = self.get_state()
+        reward = self.get_reward()
+        terminated = self.get_terminated()
+        bumpiness = self.bumpiness()
+        height = self.total_height()
+        holes = self.number_of_holes()
+
+        return state, reward, terminated, bumpiness, height, holes
+
+    def render_game(self):
         dont_burn_my_cpu = pygame.time.Clock()
-
-        # Need to just handle event in pygame to be able to move window
-        for event in pygame.event.get():
-            pass
 
         # Fills the screen background with black (RGB)
         self.screen.fill((0, 0, 0))
@@ -389,7 +386,9 @@ class TetrisApp(object):
         self.display_msg("Next:", (
             self.r_lim + cell_size,
             2))
-        self.display_msg("Score: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d\nTotal height: %d" % (self.score, self.lines, self.get_reward(), self.action_from_agent, self.bumpiness(), self.total_height()),
+        self.display_msg("Score: %d\nLines: %d\nAction reward: %d\nAction: %d\nBumpiness: %d\nTotal height: "
+                         "%d\nHoles: %d" % (self.score, self.lines, self.get_reward(), self.action_from_agent,
+                                            self.bumpiness(), self.total_height(), self.number_of_holes()),
                          (self.r_lim + cell_size, cell_size * 5))
 
         self.draw_matrix(self.b_ground_grid, (0, 0))
@@ -399,6 +398,12 @@ class TetrisApp(object):
         self.draw_matrix(self.next_stone,
                          (cols + 1, 2))
 
-        pygame.display.update()
+        # Need to just handle event in pygame to be able to move window
+        for event in pygame.event.get():
+            # If you cross down the window and exiting
+            if event.type == pygame.QUIT:
+                self.stop_ai = True
+                self.quit()
 
+        pygame.display.update()
         dont_burn_my_cpu.tick(max_fps)
