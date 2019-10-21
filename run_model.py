@@ -6,10 +6,11 @@ import time
 
 # Configuration
 environment = TetrisApp()
-# If you want to load a saved model: Name, True/False
-# You always need a name but it will not load if you put False
-agent = DQNAgent('long_q_network.h5', False)
-save_model_as = 'long1_q_network.h5'
+# If you want to load a saved model: give a model name. Example:
+# agent = DQNAgent('model2_q_network.h5')
+
+agent = DQNAgent('q_network.h5')
+save_model_as = 'new_q_network.h5'
 
 batch_size = 32
 num_of_episodes = 3000

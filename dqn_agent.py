@@ -7,7 +7,8 @@ import random
 
 class DQNAgent:
 
-    def __init__(self, string, load):
+    # If no string is given then no model is loaded
+    def __init__(self, string=0):
 
         # Initialize attributes
         self.start_size = 1000
@@ -25,7 +26,7 @@ class DQNAgent:
         self.gamma = 0.6
 
         # If you want to load a saved model
-        if load:
+        if not string == 0:
             # Load the model from string
             self.q_network = load_model(string)
             print("Loaded model with name: ", string)
@@ -83,5 +84,4 @@ class DQNAgent:
     def save_model(self, name):
         # save model and architecture to single file
         self.q_network.save(name)
-        print("Saved model to disk")
-        # print("Not saved")
+        print("Saved model to disk as: ", name)
