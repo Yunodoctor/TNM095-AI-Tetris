@@ -1,3 +1,10 @@
+# =============================================================================#
+# Name        : run_model.py                                                   #
+# Description : Running script for training a DQN agent for playing Tetris     #
+# Authors     : Ronja Faltin, Johanna Granström, Emilie Ho                     #
+# Date        : 21.10.2019                                                     #
+# ---------------------------------------------------------------------------- #
+
 from builtins import range
 import numpy as np
 from dqn_agent import DQNAgent

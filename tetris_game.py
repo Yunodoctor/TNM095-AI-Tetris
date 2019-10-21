@@ -1,12 +1,12 @@
-# ===============================================================================================#
-# Name        : Tetris.py                                                                       #
-# Description : Python version of the tetris game                                               #
-# Author      : Nguyen Vu Tuong Lam                                                             #
-# Date        : 08.11.2017                                                                      #
-# --------------------------------------------------------------------------------------------- #
-# Updated     : 10.10.2019                                                                      #
-# By          : Ronja Faltin                                                                    #
-# ===============================================================================================#
+# =============================================================================#
+# Name        : Tetris.py                                                      #
+# Description : Python version of the tetris game                              #
+# Author      : Nguyen Vu Tuong Lam                                            #
+# Date        : 08.11.2017                                                     #
+# ---------------------------------------------------------------------------- #
+# Updated     : 21.10.2019                                                     #
+# Author      : Ronja Faltin, Johanna Granström, Emilie Ho                     #
+# =============================================================================#
 
 from random import randrange as rand
 
@@ -25,14 +25,14 @@ pygame.mixer.init()
 
 colors = [
     (0, 0, 0),
-    (237, 80, 104),  # Pink
-    (255, 176, 0),  # Orange
-    (31, 163, 158),  # Bluegreen
-    (35, 51, 135),  # Blue
+    (237, 80, 104),   # Pink
+    (255, 176, 0),    # Orange
+    (31, 163, 158),   # Blue-green
+    (35, 51, 135),    # Blue
     (250, 128, 114),  # Salmon
     (230, 220, 210),  # Cream white
-    (255, 119, 0),  # Yellow
-    (20, 20, 20)  # Helper color for background grid
+    (255, 119, 0),    # Yellow
+    (20, 20, 20)      # Helper color for background grid
 ]
 
 # Define the shapes of the single parts

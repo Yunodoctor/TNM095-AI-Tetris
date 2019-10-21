@@ -1,3 +1,10 @@
+# =============================================================================#
+# Name        : dqn_agent.py                                                   #
+# Description : DQN agent for playing Tetris game                              #
+# Authors     : Ronja Faltin, Johanna Granström, Emilie Ho                     #
+# Date        : 21.10.2019                                                     #
+# ---------------------------------------------------------------------------- #
+
 from keras.models import Sequential, load_model
 from keras.layers import Dense
 from collections import deque
