@@ -18,8 +18,7 @@ class DQNAgent:
         self.neurons = [32, 32]
         self.loss = 'mse'
         self.optimizer = 'adam'
-        self.actions = [0, 1, 2, 3]
-        self.action_size = 4
+        self.actions = [0, 1, 2, 3, 4]
 
         # Initialize discount exploration rate
         self.epsilon = 0.2

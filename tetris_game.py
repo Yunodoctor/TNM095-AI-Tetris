@@ -132,8 +132,9 @@ class TetrisApp(object):
         self.actions = {
             0: lambda: self.move(-1),  # Left
             1: lambda: self.move(+1),  # Right
-            2: self.rotate_stone,  # Rotate
-            3: self.instant_drop  # Instant drop
+            2: self.rotate_stone,      # Rotate
+            3: self.instant_drop,      # Instant drop
+            4: self.drop               # Doing nothing, only drops
         }
 
     def new_stone(self):
@@ -155,6 +156,7 @@ class TetrisApp(object):
         self.lines = 0
         self.action_reward = 0
         self.stop_ai = False
+        self.gameover = False
 
         # Init variables for the function bumpiness
         self.total_bumpiness = 0
