@@ -1,5 +1,5 @@
 # =============================================================================#
-# Name        : Tetris.py                                                      #
+# Name        : tetris_game.py                                                 #
 # Description : Python version of the tetris game                              #
 # Author      : Nguyen Vu Tuong Lam                                            #
 # Date        : 08.11.2017                                                     #
